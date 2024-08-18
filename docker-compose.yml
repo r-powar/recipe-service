@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "4001:4001"
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: local
+      MONGO_URI: mongodb://localhost:27017/code-challenge-service
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

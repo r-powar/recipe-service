@@ -1,0 +1,8 @@
+node_modules
+.env
+.env.local
+yarn-error.log
+coverage
+build
+.tool-versions
+.DS_Store

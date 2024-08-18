@@ -1,0 +1,57 @@
+name: CI
+on: push
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [14.x]
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017/tcp
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: |
+          yarn install
+      - name: Runs lint
+        run: |          
+          yarn lint
+      - name: Runs audit
+        run: |
+          yarn audit
+      - name: Test Build
+        run: |
+          yarn build
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [14.x]
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017/tcp
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: |
+          yarn install
+      - name: Runs tests
+        run: |
+          yarn test:coverage ./tests --passWithNoTests
+        env:
+          MONGO_URI: mongodb://localhost:${{ job.services.mongodb.ports[27017] }}/code-challenge-service-test
+          NODE_ENV: test
+          APP_ENV: test
